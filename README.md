@@ -9,4 +9,4 @@ We provide examples in `examples` directory. For instance, if you would like to 
 Also, if you see generation process of our synthetic data, codes `examples/data_*.py` show that.
 
 # Packages
-Our code use `Python 3.7.3` and `numpy 1.17`.
+Our codes use `Python 3.7.3` and `numpy 1.17`.
