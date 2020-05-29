@@ -168,11 +168,11 @@ def main():
 
     fig, ax = plt.subplots(1,1,figsize=(8,5))
     for i, label in enumerate(["SLOCK", "KF", "observation"]):
-        ax.plot(mse_record[i], label=label, lw=2)
+        ax.plot(np.sqrt(mse_record[i]), label=label, lw=2)
     ax.set_xlabel("Timestep", fontsize=12)
-    ax.set_ylabel("MSE", fontsize=12)
+    ax.set_ylabel("RMSE", fontsize=12)
     ax.legend(fontsize=15)
-    fig.savefig(os.path.join(save_root, "mse.png"), bbox_to_inches="tight")
+    fig.savefig(os.path.join(save_root, "rmse.png"), bbox_to_inches="tight")
 
 
     ## substantial mse
@@ -227,8 +227,8 @@ def main():
             direction_count += 1
             Ftrue = translation_matrix8(Nf, Nf, directions[direction_count], True)
 
-        mean_error[0,t] = np.power(np.absolute(fvalue - Ftrue)[A.astype(bool) & ~Ftrue.astype(bool)], 2).mean()
-        mean_error[1,t] = np.power(np.absolute(fvalue - Ftrue)[A.astype(bool) & Ftrue.astype(bool)], 2).mean()
+        mean_error[0,t] = np.sqrt(np.power(np.absolute(fvalue - Ftrue)[A.astype(bool) & ~Ftrue.astype(bool)], 2).mean())
+        mean_error[1,t] = np.sqrt(np.power(np.absolute(fvalue - Ftrue)[A.astype(bool) & Ftrue.astype(bool)], 2).mean())
 
     fig, ax = plt.subplots(1,1,figsize=(12,5))
     lw = 2
@@ -238,7 +238,7 @@ def main():
     for mc in direction_changes[:-1]:
         ax.axvline(mc, ls="--", color="navy", lw=1)
     ax.set_xlabel("Timestep", fontsize=15)
-    ax.set_ylabel("SMSE", fontsize=15)
+    ax.set_ylabel("SRMSE", fontsize=15)
     ax.set_yscale("log")
     ax.legend(fontsize=12)
     ax.tick_params(labelsize=12)
@@ -247,7 +247,7 @@ def main():
     fig.text(0.09, 0, "Direction: ", fontsize=10)
     for kk, direction, mc in zip(range(len(directions)), directions_for_print, [0] + direction_changes[:-1]):
         fig.text(0.16 + mc*0.0071, 0, direction, fontsize=10)
-    fig.savefig(os.path.join(save_root, "smse.png"), bbox_inches="tight")
+    fig.savefig(os.path.join(save_root, "srmse.png"), bbox_inches="tight")
 
 
     all_execute_time = int(time.time() - all_start_time)

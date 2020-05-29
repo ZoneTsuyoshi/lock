@@ -174,11 +174,11 @@ def main():
 
     fig, ax = plt.subplots(1,1,figsize=(8,5))
     for i, label in enumerate(["LLOCK", "KF", "observation"]):
-        ax.plot(mse_record[1,i], label=label, lw=2)
+        ax.plot(np.sqrt(mse_record[1,i]), label=label, lw=2)
     ax.set_xlabel("Timestep", fontsize=12)
-    ax.set_ylabel("MSE", fontsize=12)
+    ax.set_ylabel("RMSE", fontsize=12)
     ax.legend(fontsize=15)
-    fig.savefig(os.path.join(save_root, "mse.png"), bbox_to_inches="tight")
+    fig.savefig(os.path.join(save_root, "rmse.png"), bbox_to_inches="tight")
 
 
     ## short-term prediction
@@ -203,10 +203,10 @@ def main():
     fig, ax = plt.subplots(1,1,figsize=(8,5))
     low = threshold-4; up=threshold+6; lw=2
     for i, label in enumerate(["LLOCK", "KF", "observation"]):
-        ax.plot(range(low,up), pred_mse[i,low:up], lw=lw, ls="--", c=color_list[i])
-        ax.plot(range(low,threshold+1), mse_record[0,i,low:threshold+1], label=label, lw=lw, c=color_list[i])
+        ax.plot(range(low,up), np.sqrt(pred_mse[i,low:up]), lw=lw, ls="--", c=color_list[i])
+        ax.plot(range(low,threshold+1), np.sqrt(mse_record[0,i,low:threshold+1]), label=label, lw=lw, c=color_list[i])
     ax.set_xlabel("Timestep", fontsize=12)
-    ax.set_ylabel("MSE", fontsize=12)
+    ax.set_ylabel("RMSE", fontsize=12)
     ax.legend(bbox_to_anchor=(1.05, 1.0), loc="upper left", fontsize=15)
     fig.savefig(os.path.join(save_root, "prediction.png"), bbox_inches="tight")
 
@@ -258,19 +258,19 @@ def main():
     mean_error = np.zeros((2, Tf//update_interval-1))
     for t in range(Tf//update_interval-1):
         fvalue = np.load(os.path.join(save_dir, "transition_matrix_{:02}.npy".format(t)))
-        mean_error[0,t] = np.power(np.absolute(fvalue - Ftrue)[A.astype(bool) & ~Ftrue.astype(bool)], 2).mean()
-        mean_error[1,t] = np.power(np.absolute(fvalue - Ftrue)[A.astype(bool) & Ftrue.astype(bool)], 2).mean()
+        mean_error[0,t] = np.sqrt(np.power(np.absolute(fvalue - Ftrue)[A.astype(bool) & ~Ftrue.astype(bool)], 2).mean())
+        mean_error[1,t] = np.sqrt(np.power(np.absolute(fvalue - Ftrue)[A.astype(bool) & Ftrue.astype(bool)], 2).mean())
 
     fig, ax = plt.subplots(1,1,figsize=(8,5))
     for i in range(2):
         ax.plot(update_interval * np.array(range(Tf//update_interval-1)), mean_error[i], 
                    label="true={}".format(i), lw=lw)
     ax.set_xlabel("Timestep", fontsize=15)
-    ax.set_ylabel("SMSE", fontsize=15)
+    ax.set_ylabel("SRMSE", fontsize=15)
     ax.set_yscale("log")
     ax.legend(fontsize=12)
     ax.tick_params(labelsize=12)
-    fig.savefig(os.path.join(save_root, "smse.png"), bbox_inches="tight")
+    fig.savefig(os.path.join(save_root, "srmse.png"), bbox_inches="tight")
 
 
     all_execute_time = int(time.time() - all_start_time)
